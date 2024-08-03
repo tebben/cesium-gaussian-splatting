@@ -12,4 +12,4 @@ if (viewer.cesium) {
   viewer.flyTo(location.lon, location.lat, location.height, 0, -45, 0);
 }
 
-//viewer.addGaussianSplatLayer("./data/tuin.splat");
+viewer.addGaussianSplatLayer("./data/tuin.splat");
