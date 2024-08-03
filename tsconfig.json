@@ -9,7 +9,6 @@
       "skipLibCheck": true,
       "forceConsistentCasingInFileNames": true,
       "outDir": "./dist",
-      "baseUrl": "./",
     },
     "include": ["src"]
 }
