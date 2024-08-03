@@ -17,7 +17,7 @@ export class Viewer {
 
   private createViewer() {
     this.cesium = new Cesium.Viewer("cesium", {
-        requestRenderMode: true,
+      requestRenderMode: true,
       skyBox: false,
       baseLayerPicker: false,
       geocoder: false,
@@ -27,10 +27,14 @@ export class Viewer {
       timeline: false,
       navigationHelpButton: false,
       infoBox: false,
+      // @ts-ignore
+      imageryProvider: false
     });
     this.cesium.scene.debugShowFramesPerSecond = true;
     this.cesium.clock.shouldAnimate = false;
     this.addTerrainProvider();
+    this.addBaseLayer();
+    this.addBuildingsLayer();
   }
 
   private async addTerrainProvider(): Promise<void> {
@@ -42,6 +46,25 @@ export class Viewer {
     );
     this.cesium.terrainProvider = provider;
   }
+
+    private addBaseLayer(): void {
+        var wmtsLayer = new Cesium.WebMapTileServiceImageryProvider({
+            url: 'https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0',
+            layer: 'Actueel_orthoHR',
+            style: 'default',
+            format: 'image/jpeg',
+            tileMatrixSetID: 'EPSG:3857',
+            maximumLevel: 20
+        });
+        
+        this.cesium.imageryLayers.addImageryProvider(wmtsLayer);
+    }
+
+    private async addBuildingsLayer(): Promise<void> {
+        const buildings = await Cesium.Cesium3DTileset.fromUrl("https://storage.googleapis.com/ahp-research/maquette/bag3d_v20230809/geom/tileset10k.json");
+ 
+        this.cesium.scene.primitives.add(buildings);
+    }
 
   private createOverlay() {
     this.threeOverlay = new ThreeOoverlay(this.cesium!);
