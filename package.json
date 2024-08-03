@@ -1,0 +1,23 @@
+{
+  "name": "cesium-gaussian-splatting",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite"
+  },
+  "dependencies": {
+    "@mkkellogg/gaussian-splats-3d": "^0.4.3",
+    "cesium": "^1.117.0",
+    "three": "^0.164.1",
+    "vite": "^5.2.11",
+    "vite-plugin-cesium": "^1.2.22"
+  },
+  "devDependencies": {
+    "@types/three": "^0.164.0",
+    "typescript": "^5.4.5"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}
