@@ -1,14 +1,14 @@
 {
-    "compilerOptions": {
-      "target": "ES2020",
-      "module": "ESNext",
-      "lib": ["ES2020", "DOM", "DOM.Iterable"],
-      "moduleResolution": "bundler",
-      "strict": false,
-      "esModuleInterop": true,
-      "skipLibCheck": true,
-      "forceConsistentCasingInFileNames": true,
-      "outDir": "./dist",
-    },
-    "include": ["src"]
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "moduleResolution": "bundler",
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+  },
+  "include": ["src"]
 }
