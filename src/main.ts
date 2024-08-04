@@ -4,12 +4,11 @@ const viewer = new Viewer();
 
 if (viewer.cesium) {
   const location = {
-    lon: 5.31911,
-    lat: 51.685,
-    height: 200,
-  };
+    lon: 5.31905,
+    lat: 51.68717,
+    height: 60  };
 
-  viewer.flyTo(location.lon, location.lat, location.height, 0, -45, 0);
+  viewer.flyTo(location.lon, location.lat, location.height, 10, -45, 0);
 }
 
-viewer.addGaussianSplatLayer("./data/orthen.splat");
+viewer.addGaussianSplatLayer("./data/tuin.splat");

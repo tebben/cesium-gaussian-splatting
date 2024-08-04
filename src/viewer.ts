@@ -17,7 +17,7 @@ export class Viewer {
 
   private createViewer() {
     this.cesium = new Cesium.Viewer("cesium", {
-      requestRenderMode: true,
+      //requestRenderMode: true,
       skyBox: false,
       baseLayerPicker: false,
       geocoder: false,
@@ -31,7 +31,7 @@ export class Viewer {
       imageryProvider: false
     });
     this.cesium.scene.debugShowFramesPerSecond = true;
-    this.cesium.clock.shouldAnimate = false;
+    //this.cesium.clock.shouldAnimate = false;
     this.addTerrainProvider();
     this.addBaseLayer();
     this.addBuildingsLayer();
