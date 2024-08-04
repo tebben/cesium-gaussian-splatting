@@ -2,17 +2,18 @@ import { Viewer } from "./viewer";
 
 const viewer = new Viewer();
 
-function loadGarden() {
-  viewer.flyTo(5.31905, 51.68717, 60, 10, -45, 0);
-  viewer.addGaussianSplatLayer("./data/tuin.splat", { lon: 5.31911, lat: 51.687273, height: 52.1 }, { x: -78, y: 100, z: 10 });
-}
-
 function loadArcheryClub() {
-  viewer.flyTo(5.30796, 51.70628, 68.71447, 92.46323, -42.91710, 0);
+  viewer.flyTo(5.30731, 51.70644, 65.24274, 127.00461, -17.11404, 0);
+
+  //viewer.flyTo(5.30796, 51.70628, 68.71447, 92.46323, -42.91710, 0);
   viewer.addGaussianSplatLayer("./data/target.splat", { lon: 5.308332, lat: 51.706254, height: 50.3 }, 
     { x: 1.199285294426387, y: -0.561475491622485, z: 2.430876453678189 });
+
+  //viewer.flyTo(5.30742, 51.70615, 68.66736, 92.46323, -42.91710, 0);
+  viewer.addGaussianSplatLayer("./data/pb.splat", { lon: 5.30762, lat: 51.70612, height: 50.3 }, 
+    { x: 1.9586619087229662, y: 0.4766092669791268, z: 2.3042657339892942 });
 }
 
 if (viewer.cesium) {
   loadArcheryClub();
-}
+}  

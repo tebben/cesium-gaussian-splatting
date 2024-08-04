@@ -12,7 +12,6 @@ export class ThreeOoverlay {
 
   constructor(cesiumViewer: Cesium.Viewer) {
     const threeContainer = document.getElementById("three");
-    console.log(threeContainer);
     this.cesiumViewer = cesiumViewer;
     this.threeScene = new THREE.Scene();
     this.threeCamera = new THREE.PerspectiveCamera(
