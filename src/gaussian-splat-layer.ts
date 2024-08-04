@@ -10,17 +10,44 @@ export class GaussianSplatLayer {
     private camera: THREE.Camera;
     private renderer: THREE.Renderer;
     private model: string;
+    private location: { lon: number, lat: number, height: number };
+    private rotation: { x: number, y: number, z: number };
 
-	constructor(camera: THREE.Camera, renderer: THREE.Renderer, model: string) {
+	constructor(camera: THREE.Camera, renderer: THREE.Renderer, model: string, location: { lon: number, lat: number, height: number }, rotation: { x: number, y: number, z: number }) {
         this.ready = false;
         this.camera = camera;
         this.renderer = renderer;
         this.model = model;
+        this.location = location;
+        this.rotation = rotation;
 		this.createScene();
+
+        // for rotation debugging
+        window.addEventListener('keydown', (event) => {
+            this.rotateScene(event);
+        });
 	}
 
+    private rotateScene(event: KeyboardEvent) {
+        if (event.key === 'q') {
+            this.threeScene.rotateY(0.05);
+        } else if (event.key === 'w') {
+            this.threeScene.rotateY(-0.05);
+        } else if (event.key === 'a') {
+            this.threeScene.rotateX(0.05);
+        }else if (event.key === 's') {
+            this.threeScene.rotateX(-0.05);
+        }else if (event.key === 'z') {
+            this.threeScene.rotateZ(0.05);
+        }else if (event.key === 'x') {
+            this.threeScene.rotateZ(-0.05);
+        }
+
+        console.log(this.threeScene.rotation.x, this.threeScene.rotation.y, this.threeScene.rotation.z);
+    }
+
 	private createScene() {
-        const position = Cesium.Cartesian3.fromDegrees(5.31911, 51.687273, 52.1);
+        const position = Cesium.Cartesian3.fromDegrees(this.location.lon, this.location.lat, this.location.height);
 
         this.splatViewer = new GaussianSplats3D.Viewer({
             selfDrivenMode: false,
@@ -38,12 +65,13 @@ export class GaussianSplatLayer {
         // wrong place gaussians
         this.threeScene = new THREE.Scene();
         this.threeScene.position.set(position.x, position.y, position.z);
+        this.threeScene.rotation.set(this.rotation.x, this.rotation.y, this.rotation.z);
     
         this.splatViewer
             .addSplatScene(this.model, {
                 showLoadingUI: false,
                 progressiveLoad: false,
-                rotation: this.eulerToQuaternion(-78,100,10),
+                rotation: [0,0,0],
                 scale: [1,1,1],
             })
             .then(() => {
@@ -51,31 +79,4 @@ export class GaussianSplatLayer {
                 this.ready = true;
             });
 	}
-
-    private eulerToQuaternion(xDeg: number, yDeg: number, zDeg: number): number[] {
-        // Convert angles from degrees to radians
-        const xRad = xDeg * (Math.PI / 180);
-        const yRad = yDeg * (Math.PI / 180);
-        const zRad = zDeg * (Math.PI / 180);
-    
-        // Compute quaternion for X-axis rotation
-        const cx = Math.cos(xRad / 2);
-        const sx = Math.sin(xRad / 2);
-    
-        // Compute quaternion for Y-axis rotation
-        const cy = Math.cos(yRad / 2);
-        const sy = Math.sin(yRad / 2);
-    
-        // Compute quaternion for Z-axis rotation
-        const cz = Math.cos(zRad / 2);
-        const sz = Math.sin(zRad / 2);
-    
-        // The combined quaternion components:
-        const w = cx * cy * cz + sx * sy * sz;
-        const x = sx * cy * cz - cx * sy * sz;
-        const y = cx * sy * cz + sx * cy * sz;
-        const z = cx * cy * sz - sx * sy * cz;
-    
-        return [x, y, z, w];
-    }
 }

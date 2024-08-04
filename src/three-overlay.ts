@@ -39,8 +39,8 @@ export class ThreeOoverlay {
     });
   }
 
-  public addGaussianSplatLayer(model: string) {
-    const layer = new GaussianSplatLayer(this.threeCamera, this.threeRenderer, model);
+  public addGaussianSplatLayer(model: string, location: { lon: number, lat: number, height: number }, rotation: { x: number, y: number, z: number }) {
+    const layer = new GaussianSplatLayer(this.threeCamera, this.threeRenderer, model, location, rotation);
     this.threeScene.add(layer.threeScene);
     this.gausssianSplatLayers.push(layer);
   }

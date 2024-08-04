@@ -89,7 +89,7 @@ export class Viewer {
     });
   }
 
-  public addGaussianSplatLayer(model: string): void {
-    this.threeOverlay.addGaussianSplatLayer(model);
+  public addGaussianSplatLayer(model: string, location: { lon: number, lat: number, height: number }, rotation: { x: number, y: number, z: number }): void {
+    this.threeOverlay.addGaussianSplatLayer(model, location, rotation);
   }
 }
