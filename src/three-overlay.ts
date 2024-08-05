@@ -3,18 +3,18 @@ import * as THREE from "three";
 
 import { GaussianSplatLayer } from "./gaussian-splat-layer";
 
-export class ThreeOoverlay {
-  private cesiumViewer: Cesium.Viewer;
-  private threeScene: THREE.Scene;
-  private threeCamera: THREE.PerspectiveCamera;
+export class ThreeOverlay {
+  private cesiumCamera: Cesium.Camera;
+  private scene: THREE.Scene;
+  private camera: THREE.PerspectiveCamera;
   private threeRenderer: THREE.WebGLRenderer;
   private gausssianSplatLayers: GaussianSplatLayer[];
 
-  constructor(cesiumViewer: Cesium.Viewer) {
+  constructor(cesiumCamera: Cesium.Camera) {
     const threeContainer = document.getElementById("three");
-    this.cesiumViewer = cesiumViewer;
-    this.threeScene = new THREE.Scene();
-    this.threeCamera = new THREE.PerspectiveCamera(
+    this.cesiumCamera = cesiumCamera;
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
       0.1,
@@ -33,24 +33,24 @@ export class ThreeOoverlay {
       const height = window.innerHeight;
 
       this.threeRenderer.setSize(width, height);
-      this.threeCamera.aspect = width / height;
-      this.threeCamera.updateProjectionMatrix();
+      this.camera.aspect = width / height;
+      this.camera.updateProjectionMatrix();
     });
   }
 
-  public addGaussianSplatLayer(model: string, location: { lon: number, lat: number, height: number }, rotation: { x: number, y: number, z: number }) {
-    const layer = new GaussianSplatLayer(this.threeCamera, this.threeRenderer, model, location, rotation);
-    this.threeScene.add(layer.threeScene);
+  public addGaussianSplatLayer(layer: GaussianSplatLayer) {
+    layer.setup(this.camera, this.threeRenderer);
+    this.scene.add(layer.scene);
     this.gausssianSplatLayers.push(layer);
   }
 
   public render() {
-    this.threeCamera.fov = Cesium.Math.toDegrees(
-      this.cesiumViewer.camera.frustum.fovy
+    this.camera.fov = Cesium.Math.toDegrees(
+      this.cesiumCamera.frustum.fovy
     );
-    this.threeCamera.updateProjectionMatrix();
+    this.camera.updateProjectionMatrix();
 
-    const cesiumCamera = this.cesiumViewer.camera;
+    const cesiumCamera = this.cesiumCamera;
     const cvm = cesiumCamera.viewMatrix;
     const civm = cesiumCamera.inverseViewMatrix;
     const cameraPosition = Cesium.Cartesian3.fromElements(
@@ -73,9 +73,9 @@ export class ThreeOoverlay {
     );
     const cameraUpVec3 = new THREE.Vector3(cameraUp.x, cameraUp.y, cameraUp.z);
 
-    this.threeCamera.position.copy(cameraPositionVec3);
-    this.threeCamera.up.copy(cameraUpVec3);
-    this.threeCamera.lookAt(
+    this.camera.position.copy(cameraPositionVec3);
+    this.camera.up.copy(cameraUpVec3);
+    this.camera.lookAt(
       cameraPositionVec3.clone().add(cameraDirectionVec3)
     );
 
@@ -86,6 +86,6 @@ export class ThreeOoverlay {
       layer.splatViewer.render();
     });
 
-    this.threeRenderer.render(this.threeScene, this.threeCamera);
+    this.threeRenderer.render(this.scene, this.camera);
   }
 }

@@ -1,15 +1,18 @@
 import * as Cesium from "cesium";
 
-import { ThreeOoverlay } from "./three-overlay";
+import { ThreeOverlay } from "./three-overlay";
+import { GaussianSplatLayer } from "./gaussian-splat-layer";
 
 export class Viewer {
   public cesium!: Cesium.Viewer;
 
-  private threeOverlay!: ThreeOoverlay;
+  private threeOverlay!: ThreeOverlay;
 
   constructor() {
     this.createViewer();
     this.createOverlay();
+
+    // call rendering on our three overlay after Cesium is done rendering
     this.cesium.scene.postRender.addEventListener(() => {
       this.threeOverlay.render();
     });
@@ -17,7 +20,6 @@ export class Viewer {
 
   private createViewer() {
     this.cesium = new Cesium.Viewer("cesium", {
-      //requestRenderMode: true,
       skyBox: false,
       baseLayerPicker: false,
       geocoder: false,
@@ -28,10 +30,10 @@ export class Viewer {
       navigationHelpButton: false,
       infoBox: false,
       // @ts-ignore
-      imageryProvider: false
+      imageryProvider: false,
     });
+
     this.cesium.scene.debugShowFramesPerSecond = true;
-    //this.cesium.clock.shouldAnimate = false;
     this.addTerrainProvider();
     this.addBaseLayer();
     this.addBuildingsLayer();
@@ -47,27 +49,29 @@ export class Viewer {
     this.cesium.terrainProvider = provider;
   }
 
-    private addBaseLayer(): void {
-        var wmtsLayer = new Cesium.WebMapTileServiceImageryProvider({
-            url: 'https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0',
-            layer: 'Actueel_orthoHR',
-            style: 'default',
-            format: 'image/jpeg',
-            tileMatrixSetID: 'EPSG:3857',
-            maximumLevel: 20
-        });
-        
-        this.cesium.imageryLayers.addImageryProvider(wmtsLayer);
-    }
+  private addBaseLayer(): void {
+    var wmtsLayer = new Cesium.WebMapTileServiceImageryProvider({
+      url: "https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0",
+      layer: "Actueel_orthoHR",
+      style: "default",
+      format: "image/jpeg",
+      tileMatrixSetID: "EPSG:3857",
+      maximumLevel: 20,
+    });
 
-    private async addBuildingsLayer(): Promise<void> {
-        const buildings = await Cesium.Cesium3DTileset.fromUrl("https://storage.googleapis.com/ahp-research/maquette/bag3d_v20230809/geom/tileset10k.json");
- 
-        this.cesium.scene.primitives.add(buildings);
-    }
+    this.cesium.imageryLayers.addImageryProvider(wmtsLayer);
+  }
+
+  private async addBuildingsLayer(): Promise<void> {
+    const buildings = await Cesium.Cesium3DTileset.fromUrl(
+      "https://storage.googleapis.com/ahp-research/maquette/bag3d_v20230809/geom/tileset10k.json"
+    );
+
+    this.cesium.scene.primitives.add(buildings);
+  }
 
   private createOverlay() {
-    this.threeOverlay = new ThreeOoverlay(this.cesium!);
+    this.threeOverlay = new ThreeOverlay(this.cesium!.camera);
   }
 
   public flyTo(
@@ -89,7 +93,7 @@ export class Viewer {
     });
   }
 
-  public addGaussianSplatLayer(model: string, location: { lon: number, lat: number, height: number }, rotation: { x: number, y: number, z: number }): void {
-    this.threeOverlay.addGaussianSplatLayer(model, location, rotation);
+  public addGaussianSplatLayer(layer: GaussianSplatLayer): void {
+    this.threeOverlay.addGaussianSplatLayer(layer);
   }
 }

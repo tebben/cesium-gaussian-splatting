@@ -3,26 +3,22 @@ import * as THREE from "three";
 import * as GaussianSplats3D from '@mkkellogg/gaussian-splats-3d';
 
 export class GaussianSplatLayer {
-    public threeScene!: THREE.Scene;
-    public splatViewer: GaussianSplats3D.DropInViewer;
+    public scene!: THREE.Scene;
+    public splatViewer: GaussianSplats3D.Viewer;
     public ready: boolean;
 
-    private camera: THREE.Camera;
-    private renderer: THREE.Renderer;
     private model: string;
     private location: { lon: number, lat: number, height: number };
     private rotation: { x: number, y: number, z: number };
 
-	constructor(camera: THREE.Camera, renderer: THREE.Renderer, model: string, location: { lon: number, lat: number, height: number }, rotation: { x: number, y: number, z: number }) {
+	constructor(model: string, location: { lon: number, lat: number, height: number }, rotation: { x: number, y: number, z: number }) {
         this.ready = false;
-        this.camera = camera;
-        this.renderer = renderer;
         this.model = model;
         this.location = location;
         this.rotation = rotation;
-		this.createScene();
 
-        // for rotation debugging
+        // A b*tch to get the rotation correctly
+        // so adding some keys to debug and find the rotation
         window.addEventListener('keydown', (event) => {
             this.rotateScene(event);
         });
@@ -30,23 +26,23 @@ export class GaussianSplatLayer {
 
     private rotateScene(event: KeyboardEvent) {
         if (event.key === 'q') {
-            this.threeScene.rotateY(0.05);
+            this.scene.rotateY(0.05);
         } else if (event.key === 'w') {
-            this.threeScene.rotateY(-0.05);
+            this.scene.rotateY(-0.05);
         } else if (event.key === 'a') {
-            this.threeScene.rotateX(0.05);
+            this.scene.rotateX(0.05);
         }else if (event.key === 's') {
-            this.threeScene.rotateX(-0.05);
+            this.scene.rotateX(-0.05);
         }else if (event.key === 'z') {
-            this.threeScene.rotateZ(0.05);
+            this.scene.rotateZ(0.05);
         }else if (event.key === 'x') {
-            this.threeScene.rotateZ(-0.05);
+            this.scene.rotateZ(-0.05);
         }
 
-        console.log(this.threeScene.rotation.x, this.threeScene.rotation.y, this.threeScene.rotation.z);
+        console.log("roation", this.model, this.scene.rotation.x, this.scene.rotation.y, this.scene.rotation.z);
     }
 
-	private createScene() {
+	public setup(camera: THREE.Camera, renderer: THREE.Renderer) {
         const position = Cesium.Cartesian3.fromDegrees(this.location.lon, this.location.lat, this.location.height);
 
         this.splatViewer = new GaussianSplats3D.Viewer({
@@ -56,17 +52,17 @@ export class GaussianSplatLayer {
             ignoreDevicePixelRatio: true,
             sceneRevealMode: GaussianSplats3D.SceneRevealMode.Always,
             useBuiltInControls: false,
-            camera: this.camera,
-            renderer: this.renderer,
+            camera: camera,
+            renderer: renderer,
         });
 
-        // create parent scene and place at position
-        // placing the gaussian directly results in jittering and 
-        // wrong place gaussians
-        this.threeScene = new THREE.Scene();
-        this.threeScene.position.set(position.x, position.y, position.z);
-        this.threeScene.rotation.set(this.rotation.x, this.rotation.y, this.rotation.z);
-    
+        // create parent scene and place at given position
+        // placing the splat scene directly at a world location
+        // results in jittering and inconsistent gaussian positions
+        // due to too large numbers
+        this.scene = new THREE.Scene();
+        this.scene.position.set(position.x, position.y, position.z);
+        this.scene.rotation.set(this.rotation.x, this.rotation.y, this.rotation.z);
         this.splatViewer
             .addSplatScene(this.model, {
                 showLoadingUI: false,
@@ -75,7 +71,7 @@ export class GaussianSplatLayer {
                 scale: [1,1,1],
             })
             .then(() => {
-                this.threeScene.add(this.splatViewer.getSplatMesh());
+                this.scene.add(this.splatViewer.getSplatMesh());
                 this.ready = true;
             });
 	}
