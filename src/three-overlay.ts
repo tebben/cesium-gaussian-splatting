@@ -44,6 +44,7 @@ export class ThreeOverlay {
     this.gausssianSplatLayers.push(layer);
   }
 
+  // Sync camera code taken from https://github.com/leon-juenemann/cesiumjs-with-threejs
   public render() {
     this.camera.fov = Cesium.Math.toDegrees(
       this.cesiumCamera.frustum.fovy
