@@ -46,9 +46,7 @@ export class ThreeOverlay {
 
   // Sync camera code taken from https://github.com/leon-juenemann/cesiumjs-with-threejs
   public render() {
-    this.camera.fov = Cesium.Math.toDegrees(
-      this.cesiumCamera.frustum.fovy
-    );
+    this.camera.fov = Cesium.Math.toDegrees(this.cesiumCamera.frustum.fovy);
     this.camera.updateProjectionMatrix();
 
     const cesiumCamera = this.cesiumCamera;
@@ -76,9 +74,7 @@ export class ThreeOverlay {
 
     this.camera.position.copy(cameraPositionVec3);
     this.camera.up.copy(cameraUpVec3);
-    this.camera.lookAt(
-      cameraPositionVec3.clone().add(cameraDirectionVec3)
-    );
+    this.camera.lookAt(cameraPositionVec3.clone().add(cameraDirectionVec3));
 
     this.gausssianSplatLayers.forEach((layer) => {
       if (!layer.ready) return;
